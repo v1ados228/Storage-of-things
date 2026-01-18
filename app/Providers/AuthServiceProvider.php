@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
-// use Illuminate\Support\Facades\Gate;
+use App\Models\Place;
+use App\Models\Thing;
+use App\Policies\PlacePolicy;
+use App\Policies\ThingPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +17,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        //
+        Thing::class => ThingPolicy::class,
+        Place::class => PlacePolicy::class,
     ];
 
     /**
@@ -21,6 +26,19 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $this->registerPolicies();
+
+        Gate::define('access-admin-panel', function ($user) {
+            return $user->isAdmin();
+        });
+
+        Gate::define('edit-thing', function ($user, Thing $thing) {
+            if ($user->isAdmin()) {
+                return true;
+            }
+
+            return $thing->master_id === $user->id
+                || $thing->uses()->where('user_id', $user->id)->exists();
+        });
     }
 }

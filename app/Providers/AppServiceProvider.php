@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +20,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Blade::directive('mineClass', function ($expression) {
+            return "<?php echo auth()->check() && ({$expression})->master_id === auth()->id() ? 'class=\"thing-mine\"' : ''; ?>";
+        });
+
+        Blade::directive('tabActive', function ($expression) {
+            return "<?php echo request('tab') === {$expression} ? 'class=\"tab-active\"' : ''; ?>";
+        });
+
+        Blade::directive('placeStateClass', function ($expression) {
+            return "<?php echo ({$expression})->repair ? 'class=\"place-repair\"' : (({$expression})->work ? 'class=\"place-work\"' : ''); ?>";
+        });
     }
 }

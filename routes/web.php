@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\ArchiveController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\PlaceController;
+use App\Http\Controllers\ThingController;
+use App\Http\Controllers\ThingUseController;
+use App\Http\Controllers\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +20,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('things.index');
 });
+
+Route::get('/login', [WebAuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [WebAuthController::class, 'login'])->name('login.submit');
+Route::get('/register', [WebAuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [WebAuthController::class, 'register'])->name('register.submit');
+Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
+

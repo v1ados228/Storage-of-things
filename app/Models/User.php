@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -42,4 +43,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function ownedThings()
+    {
+        return $this->hasMany(Thing::class, 'master_id');
+    }
+
+    public function uses()
+    {
+        return $this->hasMany(ThingUse::class, 'user_id');
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role && $this->role->slug === 'admin';
+    }
 }
