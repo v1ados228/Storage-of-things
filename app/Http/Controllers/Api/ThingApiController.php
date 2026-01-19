@@ -25,6 +25,8 @@ class ThingApiController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', Thing::class);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'wrnt' => ['nullable', 'date_format:Y-m-d'],

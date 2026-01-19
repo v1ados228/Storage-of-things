@@ -19,21 +19,16 @@ class ThingPolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function update(User $user, Thing $thing): bool
     {
-        if ($user->isAdmin()) {
-            return true;
-        }
-
-        return $thing->master_id === $user->id
-            || $thing->uses()->where('user_id', $user->id)->exists();
+        return $user->isAdmin();
     }
 
     public function delete(User $user, Thing $thing): bool
     {
-        return $this->update($user, $thing);
+        return $user->isAdmin();
     }
 }

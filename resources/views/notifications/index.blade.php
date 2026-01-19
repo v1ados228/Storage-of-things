@@ -8,11 +8,17 @@
             $message = $notification->data['message'] ?? ($notification->data['thing_name'] ?? '');
         @endphp
         <div class="card">
-            <div>{{ $title }}</div>
-            <div>{{ $message }}</div>
-            <div class="actions">
-                <a class="btn btn-outline" href="{{ route('notifications.show', $notification->id) }}">Открыть</a>
+            <div class="card-body">
+                <div>{{ $title }}</div>
+                <div>{{ $message }}</div>
+                <div class="actions">
+                    <a class="btn btn-outline-secondary" href="{{ route('notifications.show', $notification->id) }}">Открыть</a>
+                </div>
             </div>
         </div>
     @endforeach
+
+    <div class="mt-3">
+        {{ $notifications->withQueryString()->links() }}
+    </div>
 @endsection

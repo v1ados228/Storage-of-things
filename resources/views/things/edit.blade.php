@@ -2,24 +2,24 @@
 
 @section('content')
     <h1 class="page-title">Редактировать вещь</h1>
-    <form method="POST" action="{{ route('things.update', $thing) }}">
+    <form method="POST" action="{{ route('things.update', $thing) }}" class="mt-3">
         @csrf
         @method('PUT')
         <div>
-            <label>Название</label>
-            <input name="name" value="{{ old('name', $thing->name) }}">
+            <label class="form-label">Название</label>
+            <input class="form-control" name="name" value="{{ old('name', $thing->name) }}">
         </div>
         <div>
-            <label>Гарантия</label>
-            <input name="wrnt" type="date" value="{{ old('wrnt', $thing->wrnt) }}">
+            <label class="form-label">Гарантия</label>
+            <input class="form-control" name="wrnt" type="date" value="{{ old('wrnt', $thing->wrnt) }}">
         </div>
         <div>
-            <label>Количество у владельца</label>
-            <input name="total_amount" type="number" min="1" value="{{ old('total_amount', $thing->total_amount) }}">
+            <label class="form-label">Количество у владельца</label>
+            <input class="form-control" name="total_amount" type="number" min="1" value="{{ old('total_amount', $thing->total_amount) }}">
         </div>
         <div>
-            <label>Ед. изм.</label>
-            <select name="unit_id">
+            <label class="form-label">Ед. изм.</label>
+            <select class="form-select" name="unit_id">
                 <option value="">—</option>
                 @foreach ($units as $unit)
                     <option value="{{ $unit->id }}" {{ (int) old('unit_id', $thing->unit_id) === $unit->id ? 'selected' : '' }}>
@@ -28,6 +28,6 @@
                 @endforeach
             </select>
         </div>
-        <button class="btn" type="submit">Сохранить</button>
+        <button class="btn btn-primary" type="submit">Сохранить</button>
     </form>
 @endsection

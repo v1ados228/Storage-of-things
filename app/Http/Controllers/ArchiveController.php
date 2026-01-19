@@ -11,13 +11,17 @@ class ArchiveController extends Controller
 {
     public function index()
     {
-        $archives = ArchivedThing::latest()->get();
+        $this->authorize('viewAny', \App\Models\Place::class);
+
+        $archives = ArchivedThing::latest()->paginate(5);
 
         return view('archive.index', compact('archives'));
     }
 
     public function restore(Request $request, ArchivedThing $archive)
     {
+        $this->authorize('create', \App\Models\Place::class);
+
         if ($archive->restored_at) {
             return redirect()->route('archive.index');
         }

@@ -7,6 +7,7 @@ use App\Models\Thing;
 use App\Models\ThingUse;
 use App\Models\Unit;
 use App\Models\User;
+use App\Notifications\ThingAssignedAdminNotification;
 use App\Notifications\ThingAssignedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -56,6 +57,13 @@ class ThingUseController extends Controller
 
         $assignee = User::find($data['user_id']);
         $assignee->notify(new ThingAssignedNotification($thing, $use));
+
+        $admins = User::whereHas('role', function ($query) {
+            $query->where('slug', 'admin');
+        })->get();
+        foreach ($admins as $admin) {
+            $admin->notify(new ThingAssignedAdminNotification($thing, $use, $assignee));
+        }
 
         Cache::flush();
 

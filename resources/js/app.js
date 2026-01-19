@@ -25,3 +25,44 @@ document.addEventListener('click', (event) => {
         window.location.href = href;
     }
 });
+
+const notificationsUrl = document.body.dataset.notificationsUrl;
+if (notificationsUrl) {
+    const updateNotifications = () => {
+        fetch(notificationsUrl)
+            .then((response) => response.json())
+            .then((data) => {
+                const countEl = document.getElementById('notificationsCount');
+                const listEl = document.getElementById('notificationsList');
+
+                if (countEl) {
+                    countEl.textContent = data.count;
+                }
+
+                if (!listEl) {
+                    return;
+                }
+
+                listEl.innerHTML = '';
+                if (data.notifications.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.textContent = 'Нет уведомлений';
+                    listEl.appendChild(empty);
+                    return;
+                }
+
+                data.notifications.forEach((notification) => {
+                    const wrapper = document.createElement('div');
+                    const link = document.createElement('a');
+                    link.href = `/api/app/notifications/${notification.id}`;
+                    link.textContent = `${notification.title} — ${notification.message}`;
+                    wrapper.appendChild(link);
+                    listEl.appendChild(wrapper);
+                });
+            })
+            .catch(() => {});
+    };
+
+    updateNotifications();
+    setInterval(updateNotifications, 30000);
+}

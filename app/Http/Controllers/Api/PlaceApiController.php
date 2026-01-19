@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Events\PlaceCreated;
 use App\Http\Controllers\Controller;
 use App\Models\Place;
+use App\Models\User;
+use App\Notifications\PlaceCreatedNotification;
 use Illuminate\Http\Request;
 
 class PlaceApiController extends Controller
@@ -40,6 +42,10 @@ class PlaceApiController extends Controller
         ]);
 
         event(new PlaceCreated($place));
+        User::all()
+            ->each(function ($user) use ($place) {
+                $user->notify(new PlaceCreatedNotification($place));
+            });
 
         return response()->json($place, 201);
     }

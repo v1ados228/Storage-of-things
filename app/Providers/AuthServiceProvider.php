@@ -32,13 +32,5 @@ class AuthServiceProvider extends ServiceProvider
             return $user->isAdmin();
         });
 
-        Gate::define('edit-thing', function ($user, Thing $thing) {
-            if ($user->isAdmin()) {
-                return true;
-            }
-
-            return $thing->master_id === $user->id
-                || $thing->uses()->where('user_id', $user->id)->exists();
-        });
     }
 }

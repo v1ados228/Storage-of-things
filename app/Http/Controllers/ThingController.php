@@ -7,6 +7,7 @@ use App\Models\ArchivedThing;
 use App\Models\Thing;
 use App\Models\ThingDescription;
 use App\Models\ThingUse;
+use App\Notifications\ThingCreatedNotification;
 use App\Notifications\ThingDescriptionChangedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -19,7 +20,8 @@ class ThingController extends Controller
     {
         $tab = $request->query('tab', 'all');
         $userId = $request->user()->id;
-        $cacheKey = "things:list:{$tab}:{$userId}";
+        $page = $request->query('page', 1);
+        $cacheKey = "things:list:{$tab}:{$userId}:{$page}";
 
         $things = Cache::remember($cacheKey, 60, function () use ($tab, $userId) {
             $query = Thing::with([
@@ -32,6 +34,10 @@ class ThingController extends Controller
 
             if ($tab === 'my') {
                 $query->where('master_id', $userId);
+            } elseif ($tab === 'assigned') {
+                $query->whereHas('uses', function ($q) use ($userId) {
+                    $q->where('user_id', $userId);
+                });
             } elseif ($tab === 'repair') {
                 $query->whereHas('uses.place', function ($q) {
                     $q->where('repair', true);
@@ -46,7 +52,7 @@ class ThingController extends Controller
                 });
             }
 
-            return $query->latest()->get();
+            return $query->latest()->paginate(5);
         });
 
         return view('things.index', compact('things', 'tab'));
@@ -63,6 +69,8 @@ class ThingController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Thing::class);
+
         $units = \App\Models\Unit::orderBy('name')->get();
 
         return view('things.create', compact('units'));
@@ -70,6 +78,8 @@ class ThingController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('create', Thing::class);
+
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'wrnt' => ['nullable', 'date_format:Y-m-d'],
@@ -101,6 +111,10 @@ class ThingController extends Controller
 
         Cache::flush();
         event(new ThingCreated($thing));
+        \App\Models\User::all()
+            ->each(function ($user) use ($thing) {
+                $user->notify(new ThingCreatedNotification($thing));
+            });
 
         return redirect()->route('things.show', $thing);
     }

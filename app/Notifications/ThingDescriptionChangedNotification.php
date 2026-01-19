@@ -19,7 +19,11 @@ class ThingDescriptionChangedNotification extends Notification implements Should
 
     public function via(object $notifiable): array
     {
-        return ['database', 'mail'];
+        if ($notifiable->id === $this->thing->master_id) {
+            return ['database', 'mail'];
+        }
+
+        return ['database'];
     }
 
     public function toMail(object $notifiable): MailMessage

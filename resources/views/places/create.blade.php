@@ -2,24 +2,28 @@
 
 @section('content')
     <h1 class="page-title">Создать место</h1>
-    <form method="POST" action="{{ route('places.store') }}">
+    <form method="POST" action="{{ route('places.store') }}" class="mt-3">
         @csrf
         <div>
-            <label>Название</label>
-            <input name="name" value="{{ old('name') }}">
+            <label class="form-label">Название</label>
+            <input class="form-control" name="name" value="{{ old('name') }}">
         </div>
         <div>
-            <label>Описание</label>
-            <textarea name="description">{{ old('description') }}</textarea>
+            <label class="form-label">Описание</label>
+            <textarea class="form-control" name="description">{{ old('description') }}</textarea>
         </div>
         <div>
-            <label>Ремонт</label>
-            <input type="checkbox" name="repair" value="1">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="repair" value="1" id="placeRepair">
+                <label class="form-check-label" for="placeRepair">Ремонт</label>
+            </div>
         </div>
         <div>
-            <label>В работе</label>
-            <input type="checkbox" name="work" value="1">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="work" value="1" id="placeWork">
+                <label class="form-check-label" for="placeWork">В работе</label>
+            </div>
         </div>
-        <button class="btn" type="submit">Создать</button>
+        <button class="btn btn-primary mt-3" type="submit">Создать</button>
     </form>
 @endsection

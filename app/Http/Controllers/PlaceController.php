@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Events\PlaceCreated;
 use App\Models\Place;
+use App\Models\User;
+use App\Notifications\PlaceCreatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
@@ -13,8 +15,9 @@ class PlaceController extends Controller
     {
         $this->authorize('viewAny', Place::class);
 
-        $places = Cache::remember('places:list', 60, function () {
-            return Place::latest()->get();
+        $page = request()->query('page', 1);
+        $places = Cache::remember("places:list:{$page}", 60, function () {
+            return Place::latest()->paginate(5);
         });
 
         return view('places.index', compact('places'));
@@ -47,6 +50,10 @@ class PlaceController extends Controller
 
         Cache::forget('places:list');
         event(new PlaceCreated($place));
+        User::all()
+            ->each(function ($user) use ($place) {
+                $user->notify(new PlaceCreatedNotification($place));
+            });
 
         return redirect()->route('places.index');
     }
