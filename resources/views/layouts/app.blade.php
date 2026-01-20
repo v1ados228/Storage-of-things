@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    @auth
+        <meta name="user-id" content="{{ auth()->id() }}">
+    @endauth
     <title>Storage of Things</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -96,6 +99,7 @@
     </nav>
 </header>
 
+<div id="app"></div>
 <div class="container mt-4 pb-4">
     @if (session('status'))
         <div class="alert alert-info">

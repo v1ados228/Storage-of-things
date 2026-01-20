@@ -1,13 +1,10 @@
 import './bootstrap';
+import { createApp } from 'vue';
+import App from './components/App.vue';
 
-if (window.Echo) {
-    window.Echo.channel('things').listen('.things.created', (event) => {
-        alert(`New thing created: ${event.thing.name}`);
-    });
-
-    window.Echo.channel('places').listen('.places.created', (event) => {
-        alert(`New place created: ${event.place.name}`);
-    });
+const appElement = document.getElementById('app');
+if (appElement) {
+    createApp(App).mount('#app');
 }
 
 document.addEventListener('click', (event) => {

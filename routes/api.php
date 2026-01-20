@@ -17,32 +17,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::prefix('v1')->group(function () {
-    Route::post('/register', [AuthController::class, 'register'])->name('api.register');
-    Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/register', [AuthController::class, 'register'])->name('api.register');
+Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user', function (Request $request) {
-            return $request->user();
-        })->name('api.user');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->name('api.user');
 
-        Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
 
-        Route::apiResource('things', ThingApiController::class)->names([
-            'index' => 'api.things.index',
-            'show' => 'api.things.show',
-            'store' => 'api.things.store',
-            'update' => 'api.things.update',
-            'destroy' => 'api.things.destroy',
-        ]);
+    Route::apiResource('things', ThingApiController::class)->names([
+        'index' => 'api.things.index',
+        'show' => 'api.things.show',
+        'store' => 'api.things.store',
+        'update' => 'api.things.update',
+        'destroy' => 'api.things.destroy',
+    ]);
 
-        Route::apiResource('places', PlaceApiController::class)->names([
-            'index' => 'api.places.index',
-            'show' => 'api.places.show',
-            'store' => 'api.places.store',
-            'update' => 'api.places.update',
-            'destroy' => 'api.places.destroy',
-        ]);
-    });
+    Route::apiResource('places', PlaceApiController::class)->names([
+        'index' => 'api.places.index',
+        'show' => 'api.places.show',
+        'store' => 'api.places.store',
+        'update' => 'api.places.update',
+        'destroy' => 'api.places.destroy',
+    ]);
 });
 
